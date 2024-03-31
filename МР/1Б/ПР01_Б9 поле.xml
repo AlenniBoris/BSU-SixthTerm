@@ -1,0 +1,202 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root version="20190819">
+    <world>
+        <walls>
+            <wall id="{8ab993df-ac15-448e-80d7-132ad03599e0}" stroke="#ff000000" end="219:58" stroke-style="none" fill="#ff000000" begin="19:58" stroke-width="10"/>
+            <wall id="{2b025c02-2b0b-4514-ad49-5af44f5d08ca}" stroke="#ff000000" end="226:259" stroke-style="none" fill="#ff000000" begin="226:59" stroke-width="10"/>
+        </walls>
+        <skittles/>
+        <balls/>
+        <colorFields>
+            <ellipse id="{b23ba766-e92e-4421-a4b8-3da6633216ae}" stroke="#ff008000" fill-style="none" end="380:275" stroke-style="solid" fill="#ff008000" begin="235:130" stroke-width="6"/>
+        </colorFields>
+        <images/>
+        <regions>
+            <region id="finish" text="Finish" textX="0" width="105" height="105" color="#ff0000" x="255" y="150" visible="true" type="ellipse" filled="true" textY="0"/>
+            <region id="start_zone" text="Start" textX="0" width="90" height="-90" color="#0000ff" x="-20" y="55" visible="true" type="rectangle" filled="true" textY="0"/>
+			
+			<region type="rectangle" id="warzone" text="Поле, которое нельзя покидать" x="-20" y="-40" width="410" height="320" color="green" visible="false"/>
+			<!--<region type="rectangle" id="max-speed" text="Поле, в котором скорость 100" x="230" y="60" width="160" height="150" color="red" visible="true"/> -->
+
+		</regions>
+    </world>
+    <robots>
+        <robot id="trikKitRobot" direction="0" position="0:0">
+            <sensors>
+                <sensor direction="0" port="M4###output###М4###" position="75:25" type="kitBase::robotModel::robotParts::Motor"/>
+                <sensor direction="0" port="M3###output###М3###" position="75:25" type="kitBase::robotModel::robotParts::Motor"/>
+                <sensor direction="0" port="E3###input###M3$$$Е3###encoder3" position="75:25" type="kitBase::robotModel::robotParts::EncoderSensor"/>
+                <sensor direction="0" port="E4###input###M4$$$Е4###encoder4" position="75:25" type="kitBase::robotModel::robotParts::EncoderSensor"/>
+            </sensors>
+            <startPosition id="{a94fe41c-edbe-4d7c-b02f-7e6c931d1873}" x="25" y="25" direction="0"/>
+        </robot>
+    </robots>
+    <settings realisticSensors="false" realisticPhysics="false" realisticMotors="false"/>
+    <constraints>
+        <timelimit value="10000"/>
+        <!-- Зональное ограничение на начало езды. Проверяется один раз в начале программы-->
+        <constraint checkOnce="true" failMessage="Робот должен находиться в синем квадрате перед запуском!">
+            <inside regionId="start_zone" objectId="robot1"/>
+        </constraint>
+		<!-- Провека, что нет датчиков-->
+		<constraint checkOnce="true" failMessage="У робота не должно быть датчиков">
+			<conditions glue="and">
+				<equals>
+					<typeOf objectId="robot1.A1"/>
+					<string value="undefined"/>
+				</equals>
+				<equals>
+					<typeOf objectId="robot1.A2"/>
+					<string value="undefined"/>
+				</equals>
+				<equals>
+					<typeOf objectId="robot1.A3"/>
+					<string value="undefined"/>
+				</equals>
+				<equals>
+					<typeOf objectId="robot1.A4"/>
+					<string value="undefined"/>
+				</equals>
+				<equals>
+					<typeOf objectId="robot1.A5"/>
+					<string value="undefined"/>
+				</equals>
+				<equals>
+					<typeOf objectId="robot1.A6"/>
+					<string value="undefined"/>
+				</equals>
+				<equals>
+					<typeOf objectId="robot1.D1"/>
+					<string value="undefined"/>
+				</equals>
+				<equals>
+					<typeOf objectId="robot1.D2"/>
+					<string value="undefined"/>
+				</equals>
+				<equals>
+					<typeOf objectId="robot1.F1"/>
+					<string value="undefined"/>
+				</equals>
+			</conditions>
+		</constraint>
+		<!-- Робот находится в допустимой зоне-->
+		<constraint failMessage="Робот покинул допустимую зону!">
+			<inside objectId="robot1" regionId="warzone"/>
+		</constraint>
+		
+		  <!-- Событие, которое говорит о том, что скорость = 60 -->		
+		<event id="We are alive, first move" settedUpInitially="true">
+			<conditions glue="and">
+				<equals>
+					<objectState object="robot1.M3.power"/>
+					<int value="60"/>
+				</equals>
+				<equals>
+					<objectState object="robot1.M3.power"/>
+					<objectState object="robot1.M4.power"/>
+				</equals>
+			</conditions>
+			<trigger>
+				<setUp id="Turn_90"/>
+			</trigger>
+		</event>
+				
+		<!-- Событие, которое выдает ошибку, если робот не тронулся с места в первую секунду -->
+        <event id="Waiting for going forward too long" settedUpInitially="true">
+            <conditions glue="and">
+                <timer timeout="1000" forceDropOnTimeout="true"/>
+                <settedUp id="We are alive, first move"/>
+            </conditions>
+            <trigger>
+                <fail message="Робот так и не поехал в первую секунду, либо начал двигаться с неправильной скоростью (прочитайте условие задачи внимательней)"/>
+            </trigger>
+        </event>
+		
+		<!-- Проверка поворота. Разная мощность на моторах, если да, то проверяем на сколько в градусах повернулись-->
+		<event id="Turn_90">
+			<condition>
+				<notEqual>
+					<objectState object="robot1.M3.power"/>
+					<objectState object="robot1.M4.power"/>
+				</notEqual>		
+			</condition>
+			<triggers>
+				<setUp id="Equal speed"/>
+				<setter name="r_rotation">
+                    <objectState object="robot1.rotation"/>
+                </setter>
+			</triggers>
+		</event>
+
+		<!-- Событие, которое говорит о том, что скорости равны, значит, едем прямо сейчас -->
+		<event id="Equal speed" glue="and">
+			<conditions glue="and">
+				<equals>
+					<objectState object="robot1.M3.power"/>
+					<objectState object="robot1.M4.power"/>
+				</equals>
+			</conditions>
+			<triggers>
+				<setter name="r_rotation">
+					<abs>
+						<difference>
+							<objectState object="robot1.rotation"/>
+							<variableValue name="r_rotation"/>
+						</difference>
+					</abs>
+				</setter>
+				<setUp id="Turn_90_true"/>
+			</triggers>
+		</event>
+		
+		<!-- Событие, которое проверяет поверулся ли робот на 90 градусов -->
+		<event id="Turn_90_true">
+			<conditions glue="and">
+				<notLess>
+					<variableValue name="r_rotation"/>
+					<int value="80"/>
+				</notLess>	
+				<notGreater>
+					<variableValue name="r_rotation"/>
+					<int value="100"/>
+				</notGreater>				
+			</conditions>
+			<triggers>
+				<setUp id="Max speed"/>
+				<setUp id="finish checker"/>
+			</triggers>
+		</event>
+		
+		<!-- Событие, которое проверяет, что робот едет с максимальной скоростью -->		
+		<event id="Max speed">
+			<conditions  glue="and">
+			    <timer timeout="200" forceDropOnTimeout="true"/>
+				<notEqual>
+					<objectState object="robot1.M3.power"/>
+					<int value="100"/>
+				</notEqual>				
+			</conditions>
+			<triggers>
+				<fail message="Скорость не соответствует условию задачи"/>
+			</triggers>
+		</event>
+		
+        <!-- Событие, оповещающее об успешном выполнении программы (зона финиша + робот остановился) -->
+        <event id="finish checker" settedUpInitially="false">
+            <conditions glue="and">
+                <inside regionId="finish" objectId="robot1"/>
+				<equals>
+					<objectState object="robot1.M3.power"/>
+					<int value="0"/>
+				</equals>
+				<equals>
+					<objectState object="robot1.M4.power"/>
+					<int value="0"/>
+				</equals>
+            </conditions>
+            <trigger>
+                <success/>
+            </trigger>
+        </event>
+    </constraints>
+</root>

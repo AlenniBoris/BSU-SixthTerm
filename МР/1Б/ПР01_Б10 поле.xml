@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root version="20190819">
+    <world>
+        <walls/>
+        <skittles/>
+        <balls/>
+        <colorFields>
+            <line stroke-width="6" stroke="#ff008000" fill-style="none" end="302:100" begin="302:-51" fill="#ff008000" id="{77bb0154-36c3-41f0-a4b4-ef41250ca6fb}" stroke-style="solid"/>
+        </colorFields>
+        <images/>
+        <regions>
+            <region filled="true" text="Start" type="rectangle" textY="0" height="-90" width="85" visible="true" x="-17" color="#0000ff" id="start_zone" textX="0" y="69"/>
+            <region filled="true" text="Поле, которое нельзя покидать" type="rectangle" textY="0" height="120" width="380" visible="false" x="-20" color="#ffa500" id="warzone" textX="0" y="-30"/>
+        </regions>
+    </world>
+    <robots>
+        <robot direction="0" id="trikKitRobot" position="0:0">
+            <sensors>
+                <sensor direction="0" type="kitBase::robotModel::robotParts::Motor" port="M2###output###М2###" position="75:25"/>
+                <sensor direction="0" type="kitBase::robotModel::robotParts::EncoderSensor" port="E2###input###M2$$$Е2###encoder2" position="75:25"/>
+                <sensor direction="0" type="kitBase::robotModel::robotParts::EncoderSensor" port="E1###input###M1$$$Е1###encoder1" position="75:25"/>
+                <sensor direction="0" type="kitBase::robotModel::robotParts::EncoderSensor" port="E4###input###M4$$$Е4###encoder4" position="75:25"/>
+                <sensor direction="0" type="kitBase::robotModel::robotParts::EncoderSensor" port="E3###input###M3$$$Е3###encoder3" position="75:25"/>
+                <sensor direction="0" type="kitBase::robotModel::robotParts::Motor" port="M3###output###М3###" position="75:25"/>
+                <sensor direction="0" type="kitBase::robotModel::robotParts::Motor" port="M4###output###М4###" position="75:25"/>
+                <sensor direction="0" type="kitBase::robotModel::robotParts::Motor" port="M1###output###М1###" position="75:25"/>
+            </sensors>
+            <startPosition direction="0" x="25" id="{38903c0d-8ef3-45c4-b55b-bdf1521c0b2f}" y="25"/>
+            <wheels left="M3###output###М3###" right="M4###output###М4###"/>
+        </robot>
+    </robots>
+    <settings realisticSensors="false" realisticPhysics="false" realisticMotors="false"/>
+    <constraints>
+        <timelimit value="8000"/>
+        <!-- Зональное ограничение на начало езды. Проверяетс один раз в начале программы-->
+        <constraint checkOnce="true" failMessage="Робот должен находиться в синем квадрате перед запуском!">
+            <inside objectId="robot1" regionId="start_zone"/>
+        </constraint>
+        <!-- Робот находится в допустимой зоне-->
+        <constraint failMessage="Робот покинул допустимую зону!">
+            <inside objectId="robot1" regionId="warzone"/>
+        </constraint>
+        <!-- Событие, которое говорит о том, что робот едет вперед. Одинаковые мощности на моторах и они > 0-->
+        <event settedUpInitially="true" id="We are alive, first move">
+            <conditions glue="and">
+                <equals>
+                    <objectState object="robot1.M3.power"/>
+                    <objectState object="robot1.M4.power"/>
+                </equals>
+                <notLess>
+                    <objectState object="robot1.M3.power"/>
+                    <int value="0"/>
+                </notLess>
+            </conditions>
+            <trigger>
+                <setUp id="finish checker"/>
+            </trigger>
+        </event>
+        <!-- Событие, оповещающее об успешном выполнении программы (зона финиша + робот остановился) -->
+        <event settedUpInitially="false" id="finish checker">
+            <conditions glue="and">
+                <equals>
+                    <objectState object="robot1.M3.power"/>
+                    <int value="0"/>
+                </equals>
+                <equals>
+                    <objectState object="robot1.M4.power"/>
+                    <int value="0"/>
+                </equals>
+                <equals>
+                    <objectState object="robot1.y"/>
+                    <int value="0"/>
+                </equals>
+                <notGreater>
+                    <objectState object="robot1.x"/>
+                    <int value="301"/>
+                </notGreater>
+                <notLess>
+                    <objectState object="robot1.x"/>
+                    <int value="298"/>
+                </notLess>
+            </conditions>
+            <trigger>
+                <success/>
+            </trigger>
+        </event>
+    </constraints>
+</root>
