@@ -5,6 +5,9 @@ import numpy as np
 def f(x):
     return np.exp(x) / np.sqrt(1 - x**2)
 
+
+def f1(x):
+    return np.exp(x)
 def NAST(func, a, b, n):
     sum_result = 0
     for i in range(n + 1):
@@ -21,14 +24,14 @@ def RECTANGLE(func, a, b, n):
 
 a = -1
 b = 1
-num_nodes = [20,40,200,1000,10000,100000]
+num_nodes = [20,40]
 
 print("real = ", 3.97746)
 print("Number of Nodes\tNAST\tRectangle Formula")
 for num in num_nodes:
     print("number = ", num)
     for n in range(1, num + 1):
-        nastRes = NAST(f, a, b, n)
+        nastRes = NAST(f1, a, b, n)
         rectRes = RECTANGLE(f, a, b, n)
         print(f"{n}\t\t{nastRes}\t{rectRes}")
     print()

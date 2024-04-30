@@ -1,0 +1,48 @@
+import numpy as np
+import normalization
+
+
+data_letters_input_for_learning = np.array([normalization.normalize_sentence('Большая распродажа с уникальными скидками'),
+                                            normalization.normalize_sentence('Эксклюзивные скидки на модную одежду'),
+                                            normalization.normalize_sentence('Грандиозная распродажа электроники: лучшие скидки'),
+                                            normalization.normalize_sentence('Специальные скидки на товары для дома'),
+                                            normalization.normalize_sentence('Выбор со скидками до 50%'),
+                                            normalization.normalize_sentence('Уникальные скидки на новую коллекцию'),
+                                            normalization.normalize_sentence('Большой выбор товаров со скидкой'),
+                                            normalization.normalize_sentence('Получите эксклюзивные предложения и скидки'),
+                                            normalization.normalize_sentence('Объявляем о грандиозной распродаже'),
+                                            normalization.normalize_sentence('Не пропустите акцию со скидками'),
+                                            normalization.normalize_sentence('Солнечный день приветствует нас'),
+                                            normalization.normalize_sentence('Вкусный обед ждет вас'),
+                                            normalization.normalize_sentence('Красивый цветок расцвел сегодня'),
+                                            normalization.normalize_sentence('Дети играют на улице'),
+                                            normalization.normalize_sentence('Книга захватывает воображение'),
+                                            normalization.normalize_sentence('Морской бриз освежает воздух'),
+                                            normalization.normalize_sentence('Птицы щебечут на ветке'),
+                                            normalization.normalize_sentence('Закат создает волшебную атмосферу'),
+                                            normalization.normalize_sentence('Уютный дом приглашает на отдых'),
+                                            normalization.normalize_sentence('Музыка поднимает настроение'),
+                                            normalization.normalize_sentence('МУЗЫКА поднимает настроение МНЕ')])
+
+
+data_letters_output_for_learning = np.array([[1, 0],
+                                             [1, 0],
+                                             [1, 0],
+                                             [1, 0],
+                                             [1, 0],
+                                             [1, 0],
+                                             [1, 0],
+                                             [1, 0],
+                                             [1, 0],
+                                             [1, 0],
+                                             [0, 1],
+                                             [0, 1],
+                                             [0, 1],
+                                             [0, 1],
+                                             [0, 1],
+                                             [0, 1],
+                                             [0, 1],
+                                             [0, 1],
+                                             [0, 1],
+                                             [0, 1],
+                                             [1, 0]])
