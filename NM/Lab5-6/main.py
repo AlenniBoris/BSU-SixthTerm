@@ -53,7 +53,7 @@ ax.plot_surface(X, T, u_explicit, cmap='viridis')
 ax.set_xlabel('x')
 ax.set_ylabel('t')
 ax.set_zlabel('u')
-ax.set_title('Solution using Explicit Scheme')
+ax.set_title("Явная схема")
 plt.show()
 
 # Вывод решения в виде набора двумерных графиков-кривых

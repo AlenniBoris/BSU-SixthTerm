@@ -23,6 +23,9 @@ y = np.array([[0],
 np.random.seed(1)
 
 # randomly initialize our weights with mean 0
+# syn0 = 2 * np.random.uniform(-1,1,(2, 4)) - 1
+# syn1 = 2 * np.random.uniform(-1/2,1/2,(4, 1)) - 1
+
 syn0 = 2 * np.random.random((2, 4)) - 1
 syn1 = 2 * np.random.random((4, 1)) - 1
 

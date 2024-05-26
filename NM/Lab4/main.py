@@ -101,11 +101,6 @@ def galerkin_method(n_basis):
     u_vals = [u(xi) for xi in x_vals]
     return x_vals, u_vals
 
-# Функция для вычисления нормы разности решений
-def calculate_difference_norm(x_fd, s_fd, x_g, s_g):
-    u_fd_interp = np.interp(x_g, x_fd, s_fd)
-    norm_diff = np.linalg.norm(u_fd_interp - s_g)
-    return norm_diff
 
 # Параметры
 N = 100
@@ -115,7 +110,9 @@ M = 10
 x_finite_difference, solution_finite_difference = finite_difference_method(N)
 x_galerkin, solution_galerkin = galerkin_method(M)
 
-norm_diff = calculate_difference_norm(x_finite_difference, solution_finite_difference, x_galerkin, solution_galerkin)
+
+res_diff = solution_finite_difference - solution_galerkin[:len(solution_finite_difference)]
+norm_diff = np.linalg.norm(res_diff)
 
 # Графики
 plt.plot(x_finite_difference, solution_finite_difference, label='Метод конечных разностей')
@@ -127,3 +124,9 @@ plt.title('Решение задачи разными методами')
 plt.show()
 
 print(f'Норма разности решений: {norm_diff:.6f}')
+plt.plot(x_finite_difference, res_diff, label='Разница нешений')
+plt.xlabel('x')
+plt.ylabel('Разница')
+plt.legend()
+plt.title('Разница')
+plt.show()
